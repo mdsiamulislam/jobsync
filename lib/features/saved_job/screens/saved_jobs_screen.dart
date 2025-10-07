@@ -1,69 +1,56 @@
-
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../controllers/job_controller.dart';
+import '../models/job.dart';
 
 class SavedJobs extends StatelessWidget {
   const SavedJobs({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final JobController jobController = Get.put(JobController());
+
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            // Saved Jobs List
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                children: [
-                  SavedJobCard(
-                    location: 'Remote',
-                    title: 'Senior Product Designer',
-                    company: 'Tech Innovators Inc.',
-                    salary: '\$120K - \$150K',
-                    icon: Icons.lightbulb_outline,
-                  ),
-                  const SizedBox(height: 15),
-                  SavedJobCard(
-                    location: 'Remote',
-                    title: 'UX/UI Designer',
-                    company: 'Creative Solutions Co.',
-                    salary: '\$90K - \$110K',
-                    icon: Icons.palette_outlined,
-                  ),
-                  const SizedBox(height: 15),
-                  SavedJobCard(
-                    location: 'Remote',
-                    title: 'Frontend Developer',
-                    company: 'Digital Frontier Ltd.',
-                    salary: '\$100K - \$130K',
-                    icon: Icons.code,
-                  ),
-                ],
+        child: Obx(() {
+          final savedList = jobController.savedJobs;
+
+          if (savedList.isEmpty) {
+            return const Center(
+              child: Text(
+                'No saved jobs yet 😔',
+                style: TextStyle(fontSize: 18, color: Colors.grey),
               ),
-            ),
-          ],
-        ),
+            );
+          }
+
+          return ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            itemCount: savedList.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 15),
+            itemBuilder: (context, index) {
+              final job = savedList[index];
+              return SavedJobCard(
+                job: job,
+                onRemove: () => jobController.removeSavedJob(job),
+              );
+            },
+          );
+        }),
       ),
     );
   }
 }
 
 class SavedJobCard extends StatelessWidget {
-  final String location;
-  final String title;
-  final String company;
-  final String salary;
-  final IconData icon;
+  final Job job;
+  final VoidCallback onRemove;
 
   const SavedJobCard({
     Key? key,
-    required this.location,
-    required this.title,
-    required this.company,
-    required this.salary,
-    required this.icon,
+    required this.job,
+    required this.onRemove,
   }) : super(key: key);
 
   @override
@@ -84,52 +71,52 @@ class SavedJobCard extends StatelessWidget {
         padding: const EdgeInsets.all(20.0),
         child: Row(
           children: [
-            // Job Details
+            // Job Info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    location,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey[500],
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    title,
+                    job.title,
                     style: const TextStyle(
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   Text(
-                    '$company · $salary',
+                    job.brand ?? 'Unknown Company',
                     style: TextStyle(
                       fontSize: 15,
-                      color: Colors.grey[600],
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    job.category ?? 'Remote',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '\$${job.price.toString()} / yr',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.blue,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: 15),
-            // Company Logo
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: const Color(0xFF2D4D3D),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                icon,
-                color: Colors.white.withOpacity(0.8),
-                size: 36,
-              ),
+
+            // Remove Button
+            IconButton(
+              onPressed: onRemove,
+              icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+              tooltip: 'Remove',
             ),
           ],
         ),
