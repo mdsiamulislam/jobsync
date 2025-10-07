@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
 import 'package:jobsync/route/route_name.dart';
 import '../controllers/home_controller.dart';
@@ -9,7 +10,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final HomeController controller = Get.put(HomeController());
+    final HomeController controller = Get.find<HomeController>();
 
     return Scaffold(
       body: SafeArea(
@@ -70,41 +71,38 @@ class HomeScreen extends StatelessWidget {
 
               // Job List
               Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  itemCount: jobs.length,
-                  itemBuilder: (context, index) {
-                    final job = jobs[index];
-                    final isSaved = controller.savedJobs.any((j) => j.id == job.id);
+                child: AnimationLimiter(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    itemCount: jobs.length,
+                    itemBuilder: (context, index) {
+                      final job = jobs[index];
+                      final isSaved = controller.savedJobs.any((j) => j.id == job.id);
 
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 15),
-                      child: JobCard(
-                        job: job,
-                        isSaved: isSaved,
-                        onSave: () {
-                          controller.saveJob(job);
-                          Get.snackbar(
-                            isSaved ? 'Removed' : 'Saved',
-                            isSaved
-                                ? '${job.title} removed from Saved Jobs'
-                                : '${job.title} added to Saved Jobs 💾',
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: Colors.blue.shade50,
-                          );
-                        },
-                        onApply: () {
-                          controller.applyJob(job);
-                          Get.snackbar(
-                            'Applied',
-                            'You have applied for ${job.title} ✅',
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: Colors.green.shade50,
-                          );
-                        },
-                      ),
-                    );
-                  },
+                      return AnimationConfiguration.staggeredList(
+                        position: index,
+                        duration: const Duration(milliseconds: 375),
+                        child: SlideAnimation(
+                          verticalOffset: 50.0,
+                          child: FadeInAnimation(
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 15),
+                              child: JobCard(
+                                job: job,
+                                isSaved: isSaved,
+                                onSave: () {
+                                  controller.saveJob(job);
+                                },
+                                onApply: () {
+                                  controller.applyJob(job);
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ],
@@ -133,7 +131,7 @@ class JobCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.toNamed(RouteName.details, arguments: {'job': job});
+        Get.toNamed(RouteName.jobDetails, arguments: {'job': job});
       },
       child: Container(
         decoration: BoxDecoration(

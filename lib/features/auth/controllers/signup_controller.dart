@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:get/get.dart';
+import 'package:jobsync/core/local_storage/user_status.dart';
 import 'package:jobsync/core/universal_widgets/s_snackbar.dart';
+import 'package:jobsync/route/route_name.dart';
 
 class SignUpController extends GetxController {
   final RxBool isProcessing = false.obs;
@@ -21,7 +23,8 @@ class SignUpController extends GetxController {
     await _storage.write('password', password.text);
     SSnackbar.showSuccess('Account created successfully');
     isProcessing.value = false;
-    Get.back();
+    UserStatus.setLoggedIn(true);
+    Get.offAllNamed(RouteName.initialScreen);
   }
 
   String? getUserName() => _storage.read('name');

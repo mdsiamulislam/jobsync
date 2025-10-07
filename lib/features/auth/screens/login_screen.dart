@@ -91,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const Text('Don\'t have an account? ', style: TextStyle(fontSize: 16)),
               GestureDetector(
                 onTap: (){
-                  Get.toNamed(RouteName.signUp);
+                  Get.toNamed(RouteName.signup);
                 },
                 child: const Text('Sign Up', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue)),
               ),

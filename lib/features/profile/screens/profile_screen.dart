@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:jobsync/core/local_storage/user_auth.dart';
+import 'package:jobsync/features/home/controllers/home_controller.dart';
+import 'package:jobsync/features/profile/controllers/profile_controller.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final ProfileController controller = Get.put(ProfileController());
+    final HomeController homeController = Get.find<HomeController>();
+    UserAuth userAuth = UserAuth();
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -27,8 +35,8 @@ class ProfileScreen extends StatelessWidget {
                 const SizedBox(height: 20),
 
                 // Name
-                const Text(
-                  'John Doe',
+                 Text(
+                  userAuth.getName() ?? 'Name',
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
@@ -39,7 +47,7 @@ class ProfileScreen extends StatelessWidget {
 
                 // Email
                 Text(
-                  'john.doe@example.com',
+                  userAuth.getEmail() ?? 'example@mail.com',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey[600],
@@ -51,36 +59,27 @@ class ProfileScreen extends StatelessWidget {
                 // Stats Cards
                 Row(
                   children: [
-                    Expanded(
-                      child: _buildStatCard('Applied', '24'),
+                    Obx(
+                        (){
+                          return Expanded(
+                            child: _buildStatCard('Applied', homeController.appliedJobs.length.toString()),
+                          );
+                        }
                     ),
                     const SizedBox(width: 15),
-                    Expanded(
-                      child: _buildStatCard('Saved', '12'),
+                    Obx(
+                        (){
+                          return Expanded(
+                            child: _buildStatCard('Saved', homeController.savedJobs.length.toString()),
+                          );
+                        }
                     ),
                   ],
                 ),
 
                 const SizedBox(height: 30),
 
-                // Menu Items
-                _buildMenuItem(
-                  icon: Icons.person_outline,
-                  title: 'Edit Profile',
-                  onTap: () {},
-                ),
-                const SizedBox(height: 10),
-                _buildMenuItem(
-                  icon: Icons.description_outlined,
-                  title: 'Resume',
-                  onTap: () {},
-                ),
-                const SizedBox(height: 10),
-                _buildMenuItem(
-                  icon: Icons.notifications_outlined,
-                  title: 'Notifications',
-                  onTap: () {},
-                ),
+
                 const SizedBox(height: 10),
                 _buildMenuItem(
                   icon: Icons.help_outline,
@@ -96,27 +95,40 @@ class ProfileScreen extends StatelessWidget {
                 const SizedBox(height: 30),
 
                 // Logout Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                _buildMenuItem(
+                  icon: Icons.logout,
+                  title: 'Logout',
+                  onTap: () => controller.logout(),
+                ),
+
+                const SizedBox(height: 10),
+
+                _buildMenuItem(
+                  icon: Icons.delete_outline,
+                  title: 'Delete Account',
+                  onTap: () {
+                    Get.dialog(
+                      AlertDialog(
+                        title: const Text('Delete Account'),
+                        content: const Text(
+                            'Are you sure you want to delete your account? This action cannot be undone.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Get.back(),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () => controller.deleteAccount(),
+                            child: const Text(
+                              'Delete',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ],
                       ),
-                      elevation: 0,
-                    ),
-                    child: const Text(
-                      'Logout',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
+                    );
+                  },
+                  isDelete: true,
                 ),
               ],
             ),
@@ -167,7 +179,10 @@ class ProfileScreen extends StatelessWidget {
     required IconData icon,
     required String title,
     required VoidCallback onTap,
+    bool isDelete = false,
   }) {
+    final color = isDelete ? Colors.red : Colors.blue;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -189,12 +204,12 @@ class ProfileScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.1),
+                color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
                 icon,
-                color: Colors.blue,
+                color: color,
                 size: 24,
               ),
             ),
@@ -202,16 +217,17 @@ class ProfileScreen extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
+                  color: isDelete ? Colors.red : Colors.black,
                 ),
               ),
             ),
-            const Icon(
+            Icon(
               Icons.arrow_forward_ios,
               size: 18,
-              color: Colors.grey,
+              color: isDelete ? Colors.red : Colors.grey,
             ),
           ],
         ),

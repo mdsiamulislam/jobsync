@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jobsync/features/home/controllers/home_controller.dart';
+import 'package:jobsync/features/home/models/job_model.dart';
 
-import '../controllers/job_controller.dart';
-import '../models/job.dart';
-
-class SavedJobs extends StatelessWidget {
-  const SavedJobs({Key? key}) : super(key: key);
+class SavedJobsScreen extends StatelessWidget {
+  const SavedJobsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final JobController jobController = Get.put(JobController());
+    final HomeController homeController = Get.find<HomeController>();
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Saved Jobs'),
+      ),
       body: SafeArea(
         child: Obx(() {
-          final savedList = jobController.savedJobs;
-
+          final savedList = homeController.savedJobs;
           if (savedList.isEmpty) {
             return const Center(
               child: Text(
-                'No saved jobs yet 😔',
+                'No saved jobs yet',
                 style: TextStyle(fontSize: 18, color: Colors.grey),
               ),
             );
@@ -33,7 +34,7 @@ class SavedJobs extends StatelessWidget {
               final job = savedList[index];
               return SavedJobCard(
                 job: job,
-                onRemove: () => jobController.removeSavedJob(job),
+                onRemove: () => homeController.removeSavedJob(job),
               );
             },
           );
@@ -44,7 +45,7 @@ class SavedJobs extends StatelessWidget {
 }
 
 class SavedJobCard extends StatelessWidget {
-  final Job job;
+  final JobModel job;
   final VoidCallback onRemove;
 
   const SavedJobCard({
@@ -85,7 +86,7 @@ class SavedJobCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    job.brand ?? 'Unknown Company',
+                    job.brand,
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.grey[700],
@@ -93,7 +94,7 @@ class SavedJobCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    job.category ?? 'Remote',
+                    job.category,
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[500],

@@ -2,31 +2,30 @@ import 'package:get/get.dart';
 import 'package:jobsync/features/auth/screens/login_screen.dart';
 import 'package:jobsync/features/auth/screens/signup_screen.dart';
 import 'package:jobsync/features/job/screens/job_details_screen.dart';
+import 'package:jobsync/features/main_screen.dart';
 import 'package:jobsync/route/route_name.dart';
 
-import '../features/initial_screen.dart';
-
-class RoutingList{
-
+class RoutingList {
   static final routes = [
-
     GetPage(
-      name: RouteName.logIn,
+      name: RouteName.initialScreen,
+      page: () => const MainScreen(),
+    ),
+    GetPage(
+      name: RouteName.login,
       page: () => const LoginScreen(),
     ),
     GetPage(
-      name: RouteName.signUp,
+      name: RouteName.signup,
       page: () => const SignUpScreen(),
     ),
     GetPage(
-      name: RouteName.initialScreen,
-      page: () => const InitialScreen(),
+      name: RouteName.main,
+      page: () => const MainScreen(),
     ),
     GetPage(
-      name: RouteName.details,
+      name: RouteName.jobDetails,
       page: () => const JobDetailsScreen(),
-    )
-
+    ),
   ];
-
 }

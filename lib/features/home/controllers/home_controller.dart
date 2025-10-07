@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';
+import 'package:jobsync/core/universal_widgets/s_snackbar.dart';
 import '../models/job_model.dart';
 
 class HomeController extends GetxController {
@@ -62,9 +63,9 @@ class HomeController extends GetxController {
     if (!savedJobs.any((j) => j.id == job.id)) {
       savedJobs.add(job);
       storage.write(savedJobsKey, savedJobs.map((j) => _jobToJson(j)).toList());
-      Get.snackbar('Saved', 'Job saved successfully ✅');
+      SSnackbar.showSuccess('Job has been saved successfully 🎉');
     } else {
-      Get.snackbar('Already Saved', 'This job is already in saved list.');
+      SSnackbar.showError('This job is already in your saved list.');
     }
   }
 
@@ -73,10 +74,17 @@ class HomeController extends GetxController {
     if (!appliedJobs.any((j) => j.id == job.id)) {
       appliedJobs.add(job);
       storage.write(appliedJobsKey, appliedJobs.map((j) => _jobToJson(j)).toList());
-      Get.snackbar('Applied', 'You have applied to this job 🎉');
+      SSnackbar.showSuccess('You have successfully applied for this job 🎉');
     } else {
-      Get.snackbar('Already Applied', 'You have already applied for this job.');
+      SSnackbar.showError('You have already applied for this job.');
     }
+  }
+
+  /// Remove Saved Job Locally
+  void removeSavedJob(JobModel job) {
+    savedJobs.removeWhere((j) => j.id == job.id);
+    storage.write(savedJobsKey, savedJobs.map((j) => _jobToJson(j)).toList());
+    SSnackbar.showSuccess('Job has been removed from your saved list.');
   }
 
   Map<String, dynamic> _jobToJson(JobModel job) => {

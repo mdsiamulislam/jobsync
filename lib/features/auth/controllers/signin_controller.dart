@@ -22,7 +22,7 @@ class SignInController extends GetxController {
     if (email.text == storedEmail && password.text == storedPassword) {
       SSnackbar.showSuccess('Login successful');
       UserStatus.setLoggedIn(true);
-      Get.offNamed(RouteName.initialScreen);
+      Get.offAllNamed(RouteName.initialScreen);
       print('Login successful');
     } else {
       SSnackbar.showError('Invalid email or password');

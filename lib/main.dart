@@ -23,11 +23,11 @@ class StartApp extends StatelessWidget {
       title: 'Job Sync',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        textTheme: GoogleFonts.alataTextTheme(),
+        textTheme: GoogleFonts.poppinsTextTheme(),
         primarySwatch: Colors.blue,
       ),
       getPages: RoutingList.routes,
-      initialRoute: UserStatus.isLoggedIn() ? RouteName.initialScreen : RouteName.logIn,
+      initialRoute: UserStatus.isLoggedIn() ? RouteName.main : RouteName.login,
     );
   }
 }

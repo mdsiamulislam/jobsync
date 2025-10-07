@@ -1,11 +1,7 @@
 class RouteName {
-
-  static const String logIn = '/sign-in';
-  static const String signUp = '/sign-up';
-  static const String initialScreen = '/initial-screen';
-  static const String home = '/home';
-  static const String profile = '/saved-jobs';
-  static const String settings = '/profile';
-  static const String details = '/job-details';
-
+  static const String initialScreen = '/';
+  static const String login = '/login';
+  static const String signup = '/signup';
+  static const String main = '/main';
+  static const String jobDetails = '/job-details';
 }

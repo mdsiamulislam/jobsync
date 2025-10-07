@@ -14,8 +14,6 @@ class UserAuth {
   String? getPassword() => _storage.read('password');
 
   Future<void> clearUserData() async {
-    await _storage.remove('name');
-    await _storage.remove('email');
-    await _storage.remove('password');
+    await _storage.erase();
   }
 }

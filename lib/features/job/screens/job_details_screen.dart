@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jobsync/features/home/controllers/home_controller.dart';
 
 import '../../home/models/job_model.dart';
-import '../../saved_job/controllers/job_controller.dart';
 
 class JobDetailsScreen extends StatelessWidget {
   const JobDetailsScreen({Key? key}) : super(key: key);
@@ -11,7 +11,7 @@ class JobDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Get the passed arguments
     final JobModel job = Get.arguments['job'];
-    final JobController jobController = Get.put(JobController());
+    final HomeController homeController = Get.find<HomeController>();
 
     return Scaffold(
       appBar: AppBar(
@@ -136,13 +136,7 @@ class JobDetailsScreen extends StatelessWidget {
             Expanded(
               child: OutlinedButton.icon(
                 onPressed: () {
-                  jobController.savedJobs;
-                  Get.snackbar(
-                    'Saved',
-                    '${job.title} added to Saved Jobs 💾',
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: Colors.blue.shade50,
-                  );
+                  homeController.saveJob(job);
                 },
                 icon: const Icon(Icons.bookmark_border),
                 label: const Text('Save Job'),
@@ -162,13 +156,7 @@ class JobDetailsScreen extends StatelessWidget {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  jobController.appliedJobs;
-                  Get.snackbar(
-                    'Applied',
-                    'You’ve applied for ${job.title} ✅',
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: Colors.green.shade50,
-                  );
+                  homeController.applyJob(job);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
