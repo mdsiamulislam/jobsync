@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 class STextField extends StatefulWidget {
@@ -5,13 +7,15 @@ class STextField extends StatefulWidget {
   IconData prefixIcon;
   TextInputType keyboardType;
   bool isObscure = false;
+  TextEditingController textController;
 
   STextField({
     super.key,
     required this.lebelText,
     required this.prefixIcon,
     this.keyboardType = TextInputType.text,
-    this.isObscure = false
+    this.isObscure = false,
+    required this.textController,
   });
 
   @override
@@ -42,6 +46,7 @@ class _STextFieldState extends State<STextField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: widget.textController,
       obscureText: widget.isObscure,
       focusNode: _focusNode,
       keyboardType: widget.keyboardType,

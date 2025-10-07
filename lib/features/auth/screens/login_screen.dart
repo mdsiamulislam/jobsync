@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jobsync/core/universal_widgets/s_text_field.dart';
+import 'package:jobsync/features/auth/controllers/signin_controller.dart';
 
 import '../../../route/route_name.dart';
 
@@ -14,6 +15,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
+
+    final SignInController controller = Get.put(SignInController());
+
     return Scaffold(
       backgroundColor:Colors.white,
       appBar:  AppBar(
@@ -36,12 +40,14 @@ class _LoginScreenState extends State<LoginScreen> {
             )),
             const SizedBox(height: 32),
             STextField(
+              textController: controller.email,
               lebelText: 'Email',
               prefixIcon: Icons.email,
               keyboardType: TextInputType.emailAddress,
             ),
             const SizedBox(height: 16),
             STextField(
+              textController: controller.password,
               lebelText: 'Password',
               prefixIcon: Icons.lock,
               isObscure: true,
@@ -52,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 60,
               child: ElevatedButton(
                 onPressed: (){
-                  Get.toNamed(RouteName.initialScreen);
+                  controller.signIn();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
@@ -60,7 +66,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
-                child: const Text('Login', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                child: Obx(
+                    (){
+                      return controller.isProcessing.value
+                          ? const CircularProgressIndicator(
+                        color: Colors.white,
+                      )
+                          : const Text('Login', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white));
+                    }
+                ),
               ),
             ),
           ],

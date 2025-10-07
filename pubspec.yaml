@@ -11,6 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
 
+  ## == Local Storage == ##
+  get_storage: ^2.1.1
+
   ## == State Management == ##
   get: ^4.7.2
 

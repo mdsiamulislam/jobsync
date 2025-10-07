@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jobsync/core/universal_widgets/s_text_field.dart';
+import 'package:jobsync/features/auth/controllers/signup_controller.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -12,6 +13,9 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
+
+    final SignUpController controller = Get.put(SignUpController());
+
     return Scaffold(
       backgroundColor:Colors.white,
       appBar:  AppBar(
@@ -34,18 +38,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
             )),
             const SizedBox(height: 32),
             STextField(
+              textController: controller.name,
               lebelText: 'Full Name',
               prefixIcon: Icons.person,
               keyboardType: TextInputType.name,
             ),
             const SizedBox(height: 16),
             STextField(
+              textController: controller.email,
               lebelText: 'Email',
               prefixIcon: Icons.email,
               keyboardType: TextInputType.emailAddress,
             ),
             const SizedBox(height: 16),
             STextField(
+              textController: controller.password,
               lebelText: 'Password',
               prefixIcon: Icons.lock,
               isObscure: true,
@@ -55,14 +62,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
               width: double.infinity,
               height: 60,
               child: ElevatedButton(
-                onPressed: (){},
+                onPressed: (){
+                  controller.signUp();
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
-                child: const Text('Login', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                child: Obx(
+                    (){
+                      return controller.isProcessing.value
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          :Text('Sign Up', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white));
+                    }
+                ),
               ),
             ),
           ],
