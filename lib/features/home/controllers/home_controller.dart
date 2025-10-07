@@ -9,10 +9,11 @@ class HomeController extends GetxController {
   var isLoading = false.obs;
   var errorMessage = ''.obs;
   var jobList = <JobModel>[].obs;
+  var filteredJobs = <JobModel>[].obs;
+  var searchQuery = ''.obs;
 
   final storage = GetStorage();
 
-  // Local Storage Keys
   final String savedJobsKey = 'savedJobs';
   final String appliedJobsKey = 'appliedJobs';
 
@@ -24,9 +25,24 @@ class HomeController extends GetxController {
     super.onInit();
     fetchJobs();
     loadLocalJobs();
+
+    debounce(searchQuery, (_) => filterJobs(), time: const Duration(milliseconds: 300));
   }
 
-  /// Fetch jobs from API
+  void filterJobs() {
+    final query = searchQuery.value.toLowerCase();
+    if (query.isEmpty) {
+      filteredJobs.value = jobList;
+    } else {
+      filteredJobs.value = jobList
+          .where((job) =>
+              job.title.toLowerCase().contains(query) ||
+              job.brand.toLowerCase().contains(query) ||
+              job.category.toLowerCase().contains(query))
+          .toList();
+    }
+  }
+
   Future<void> fetchJobs() async {
     try {
       isLoading(true);
@@ -39,6 +55,7 @@ class HomeController extends GetxController {
         final products = data['products'] as List;
 
         jobList.value = products.map((e) => JobModel.fromJson(e)).toList();
+        filteredJobs.value = jobList;
       } else {
         errorMessage('Failed to fetch jobs: ${response.statusCode}');
       }
@@ -49,7 +66,6 @@ class HomeController extends GetxController {
     }
   }
 
-  /// Load local saved/applied jobs
   void loadLocalJobs() {
     final saved = storage.read<List>(savedJobsKey) ?? [];
     final applied = storage.read<List>(appliedJobsKey) ?? [];
@@ -58,7 +74,6 @@ class HomeController extends GetxController {
     appliedJobs.value = applied.map((e) => JobModel.fromJson(e)).toList();
   }
 
-  /// Save Job Locally
   void saveJob(JobModel job) {
     if (!savedJobs.any((j) => j.id == job.id)) {
       savedJobs.add(job);
@@ -69,7 +84,6 @@ class HomeController extends GetxController {
     }
   }
 
-  /// Apply Job Locally
   void applyJob(JobModel job) {
     if (!appliedJobs.any((j) => j.id == job.id)) {
       appliedJobs.add(job);
@@ -80,7 +94,6 @@ class HomeController extends GetxController {
     }
   }
 
-  /// Remove Saved Job Locally
   void removeSavedJob(JobModel job) {
     savedJobs.removeWhere((j) => j.id == job.id);
     storage.write(savedJobsKey, savedJobs.map((j) => _jobToJson(j)).toList());

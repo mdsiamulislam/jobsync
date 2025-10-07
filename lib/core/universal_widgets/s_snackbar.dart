@@ -26,11 +26,11 @@ class SSnackbar {
     Get.showSnackbar(
       GetSnackBar(
         backgroundColor: Color(backgroundColor!.value),
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         borderRadius: 8,
         margin: const EdgeInsets.all(16),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        duration: const Duration(seconds: 2),
+        duration: const Duration(seconds: 1),
         messageText: Row(
           children: [
             Icon(icon, color: Colors.white, size: 22),
