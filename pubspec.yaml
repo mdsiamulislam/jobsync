@@ -23,6 +23,9 @@ dependencies:
   ## == Animation == ##
   flutter_staggered_animations: ^1.1.1
 
+  ## == HTTP Requests == ##
+  http: ^1.5.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

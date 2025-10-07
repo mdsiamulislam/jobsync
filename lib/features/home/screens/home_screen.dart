@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
 import 'package:jobsync/core/universal_widgets/job_card.dart';
-import 'package:jobsync/route/route_name.dart';
 import '../controllers/home_controller.dart';
-import '../models/job_model.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
